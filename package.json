@@ -2,7 +2,7 @@
   "name": "drm-env-helpers",
   "version": "1.0.0",
   "private": true,
-  "author": "@paulrosset",
+  "author": "@PaulRosset",
   "description": "Media Capabilities helpers for browsers",
   "license": "MIT",
   "dependencies": {

@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import 'semantic-ui-css/semantic.min.css';
-import styled from 'styled-components';
+import React, { createContext, useState, useEffect } from "react";
+import "semantic-ui-css/semantic.min.css";
+import styled from "styled-components";
 
-import { dependencies } from '../package.json';
-import ConfigInput from './components/ConfigInput';
-import Results from './components/Results';
-const contentful = require('contentful');
+import Dashboard from "./components/Dashboard";
+
+import {
+  ImageLogo,
+  FlexContainer,
+} from "./components/features/styleFeatureContainer";
+
+import Moon from "./static/nature.svg";
+import Sun from "./static/sun.svg";
+import Play from "./static/play-button.svg";
 
 const Body = styled.div`
   display: flex;
@@ -14,63 +20,68 @@ const Body = styled.div`
   justify-content: space-evenly;
   align-items: center;
   margin: 20px 20px;
+  max-width: 960px;
+  margin: auto;
 `;
 
-const client = contentful.createClient({
-  space: process.env.REACT_APP_SPACE,
-  accessToken: process.env.REACT_APP_ACCESS_TOKEN,
-});
+const ContextTheming = createContext(false);
+const { Provider, Consumer } = ContextTheming;
 
 function App() {
-  const [configInput, setConfigInput] = useState('');
-  const [shouldRefresh, setRefresh] = useState(Date.now());
-  const [preDefinedConfig, setDefinedConfig] = useState('loading');
-  const [error, setError] = useState('');
+  const [isDarkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    client
-      .getEntry('4gkBaVbwoQeA1IagDESW5E')
-      .then(entry => setDefinedConfig(entry.fields.mediaKeySystemConfiguration))
-      .catch(setError);
+    const isDarkMode = localStorage.getItem("isDarkMode");
+    if (isDarkMode === null || isDarkMode === "false") {
+      changeSystemLuminosity(false)();
+      return;
+    }
+    changeSystemLuminosity(true)();
   }, []);
 
-  const getConfigInput = data => {
-    setError('');
-    try {
-      setConfigInput(
-        data.from === 'definedConfig' ? data.value : JSON.parse(data.value)
-      );
-      setRefresh(Date.now());
-    } catch (e) {
-      setError(e.message);
+  const changeSystemLuminosity = (shouldBeDarkMode) => () => {
+    setDarkMode(shouldBeDarkMode);
+    if (shouldBeDarkMode) {
+      document.body.style.backgroundColor = "#0C1514";
+      document.body.style.color = "#ffffff";
+      localStorage.setItem("isDarkMode", true);
+    } else {
+      document.body.style.backgroundColor = "#ffffff";
+      document.body.style.color = "#000000";
+      localStorage.setItem("isDarkMode", false);
     }
   };
 
   return (
-    <div className="App">
-      <header>
-        <h1>Drm Environment Helpers - Canal+</h1>
-        <p>
-          Using <code>mediaCapabilitiesProber</code> from{' '}
-          <span style={{ fontWeight: 'bold', color: 'red' }}>
-            rx-player ({dependencies['rx-player']})
-          </span>
-        </p>
-        <hr className="separator" />
-      </header>
-      <Body>
-        <ConfigInput
-          getConfigInputState={getConfigInput}
-          preDefinedConfig={preDefinedConfig}
-        />
-        <Results
-          configInput={configInput}
-          error={error}
-          shouldRefresh={shouldRefresh}
-        />
-      </Body>
-    </div>
+    <Provider value={isDarkMode}>
+      <div className="App">
+        <div
+          className="header"
+          style={{
+            backgroundColor: isDarkMode ? "#0C1514" : "#ffffff",
+            borderBottom: isDarkMode ? "1px solid #fff" : "inherit",
+          }}
+        >
+          <FlexContainer align="center">
+            <ImageLogo src={Play} alt="logo brand" height="55px" width="55px" />
+            Media Helpers for browsers
+          </FlexContainer>
+          <ImageLogo
+            src={isDarkMode ? Sun : Moon}
+            isDarkMode={isDarkMode}
+            alt="darkmode"
+            height="55px"
+            width="55px"
+            onClick={changeSystemLuminosity(!isDarkMode)}
+          />
+        </div>
+        <Body>
+          <Dashboard />
+        </Body>
+      </div>
+    </Provider>
   );
 }
 
 export default App;
+export { Consumer, ContextTheming };

@@ -1,6 +1,6 @@
 {
-  "short_name": "Drm Env Helpers - Canal+",
-  "name": "Drm Env Helpers - Canal+",
+  "short_name": "Media Capabilities helpers",
+  "name": "Media Capabilities helpers for browsers",
   "icons": [
     {
       "src": "favicon.ico",

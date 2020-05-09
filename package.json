@@ -2,8 +2,8 @@
   "name": "drm-env-helpers",
   "version": "1.0.0",
   "private": true,
-  "author": "@canalplus",
-  "description": "Canal+ - DRM-ENV-HELPER",
+  "author": "@paulrosset",
+  "description": "Media Capabilities helpers for browsers",
   "license": "MIT",
   "dependencies": {
     "@xstate/react": "^0.8.1",

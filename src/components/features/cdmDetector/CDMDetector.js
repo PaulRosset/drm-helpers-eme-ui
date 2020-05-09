@@ -146,7 +146,8 @@ function CDMDetector({ isDarkMode }) {
           )
         ) : null}
       </TitleContainer>
-      {navigator.requestMediaKeySystemAccess !== undefined ? (
+      {!/iPad|iPhone|iPod/.test(navigator.platform) &&
+      navigator.requestMediaKeySystemAccess !== undefined ? (
         <FlexContainer direction="column" margin="5px 0" width="100%">
           <Select onChange={onConfigChange} isDarkMode={isDarkMode}>
             <option value="0">--Please choose a configuration--</option>
@@ -227,12 +228,9 @@ function CDMDetector({ isDarkMode }) {
             The <code>requestMediaKeySystemAccess</code> method from{" "}
             <code>navigator</code> is not available on your current browser.
           </p>
-          {Object.prototype.toString
-            .call(window.HTMLElement)
-            .includes("Constructor") ||
-          // eslint-disable-next-line
-          (!window.safari || safari.pushNotification).toString() ===
-            "[object SafariRemoteNotification]" ? (
+          {window.safari !== undefined ||
+          (!!navigator.platform &&
+            /iPad|iPhone|iPod/.test(navigator.platform)) ? (
             <p
               align="center"
               style={{ display: "flex", flexDirection: "column" }}
@@ -245,7 +243,8 @@ function CDMDetector({ isDarkMode }) {
                 Safari come with <b>Fairplay</b> as{" "}
                 <b>Content decryption module.</b>
                 <br /> It supports media decoding and decryption playback on the
-                hardware side, that allow you to play 1080p quality content.
+                hardware side, that allows you to play 1080p video quality
+                content.
               </div>
             </p>
           ) : null}
